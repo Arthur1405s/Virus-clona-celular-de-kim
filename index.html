@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo: Adivinhe o Número</title>
+
+    <!-- CSS integrado -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ffe4e1, #ffb6c1);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #e75480;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1em;
+            width: 50%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin-top: 10px;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e75480;
+        }
+
+        #resultMessage {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #attemptsMessage {
+            margin-top: 5px;
+            color: #555;
+        }
+
+        /* Confetes estilo */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #ff69b4;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: fall 2s linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) scale(0.8);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Adivinhe o Número macaca</h1>
+        <p>Tente adivinhar o número que estou pensando entre 1 e 100.</p>
+        
+        <input type="number" id="guessInput" placeholder="Digite seu palpite" min="1" max="100">
+        <button onclick="makeGuess()">Enviar Palpite</button>
+        
+        <p id="resultMessage"></p>
+        <p id="attemptsMessage">Tentativas restantes: 10</p>
+        
+        <button onclick="restartGame()">Reiniciar Jogo</button>
+    </div>
+    
+    <!-- JavaScript integrado -->
+    <script>
+        const secretNumber = 100; // Número certo fixo
+        let attempts = 10;
+
+        function makeGuess() {
+            const guessInput = document.getElementById("guessInput");
+            const resultMessage = document.getElementById("resultMessage");
+            const attemptsMessage = document.getElementById("attemptsMessage");
+
+            const guess = Number(guessInput.value);
+
+            if (guess < 1 || guess > 100) {
+                resultMessage.textContent = "Por favor, insira um número entre 1 e 100.";
+                return;
+            }
+
+            attempts--;
+
+            if (guess === secretNumber) {
+                resultMessage.textContent = "Parabéns, você acertou, esse é o número de vezes que eu te colocaria na chapa agora, pois o quanto eu te amo nao cabe numa escala de 0 a 100❤️";
+                resultMessage.style.color = "green";
+                attemptsMessage.textContent = "Tentativas restantes: " + attempts;
+                triggerConfetti(); // Chama a função para o efeito de confete
+                disableInput();
+            } else if (guess > secretNumber) {
+                resultMessage.textContent = "O número é menor. Tente novamente!";
+                resultMessage.style.color = "red";
+            } else {
+                resultMessage.textContent = "O número é maior. Tente novamente!";
+                resultMessage.style.color = "red";
+            }
+
+            attemptsMessage.textContent = "Tentativas restantes: " + attempts;
+
+            if (attempts <= 0) {
+                resultMessage.textContent = "Ah não, você perdeu! O número era " + secretNumber;
+                disableInput();
+            }
+        }
+
+        function disableInput() {
+            document.getElementById("guessInput").disabled = true;
+        }
+
+        function restartGame() {
+            attempts = 10;
+
+            document.getElementById("guessInput").disabled = false;
+            document.getElementById("guessInput").value = "";
+            document.getElementById("resultMessage").textContent = "";
+            document.getElementById("resultMessage").style.color = "#333";
+            document.getElementById("attemptsMessage").textContent = "Tentativas restantes: " + attempts;
+        }
+
+        // Função para criar o efeito de confetes caindo
+        function triggerConfetti() {
+            for (let i = 0; i < 100; i++) { // número de confetes
+                const confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+
+                // Define a posição inicial e o estilo aleatório para os confetes
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.backgroundColor = randomColor();
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+                
+                document.body.appendChild(confetti);
+
+                // Remove o confete após a animação
+                setTimeout(() => {
+                    confetti.remove();
+                }, 2000);
+            }
+        }
+
+        // Função para gerar uma cor aleatória para os confetes
+        function randomColor() {
+            const colors = ["#ff69b4", "#ff6347", "#ffd700", "#7fffd4", "#dda0dd"];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    </script>
+</body>
+</html>
